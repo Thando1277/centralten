@@ -67,4 +67,83 @@ const signup = async (req, res) => {
     }
 }
 
-module.exports = {signup};
+const login = async (req, res) => {
+    try{
+        const { email, password} = req.body || {};
+
+        const userData = {
+            email,
+            password
+        }
+
+        const validationError = authValidator.validateLogin(userData);
+
+        if(validationError){
+            return res.status(400).json({
+                success: false,
+                message: validationError
+            });
+        }
+
+        const normalizedUserData = {
+            email: email.trim().toLowerCase(),
+            password
+        }
+
+        const data = await authService.login(normalizedUserData);
+
+        return res.status(200).json({
+            success: true,
+            message: "Login successful.",
+            user: {
+                id: data.user.id,
+                email: data.user.email
+            },
+            sesion: {
+                access_token: data.session.access_token,
+                refresh_token: data.session.refresh_token,
+                expires_at: data.session.expires_at
+            }
+        });
+
+    }
+    catch(error){
+        console.error("Login error, ", error);
+
+        if(error.code == "invalid_credentials"){
+            return res.status(401).json({
+                success: false,
+                message: "Incorrect email or password."
+            });
+        }
+
+        if(error.code == "email_not_confrimed"){
+            return res.status(403).json({
+                success: false,
+                message: "Please verify your email address before logging in"
+            })
+        }
+
+        return res.status(500).json({
+            success: false,
+            message: "An unexpected error occured."
+        })
+    }
+}
+
+const getProfile = async (req, res) => {
+    return res.status(200).json({
+        success: true,
+        message: "You are authenticated.",
+        user: {
+            id: req.user.id,
+            email: req.user.email
+        }
+    });
+};
+
+module.exports = {
+    signup,
+    login,
+    getProfile
+};

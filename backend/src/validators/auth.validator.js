@@ -46,6 +46,32 @@ const validateSignup = (userData) => {
     return null;
 };
 
+//Validate login
+const validateLogin = (userData) => {
+    if(!userData || typeof userData !== "object" || Array.isArray(userData)){
+        return "Invalid login data";
+    }
+
+    const { email, password} = userData;
+
+    if(!email || !password){
+        "Please provide your email and password."
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if(typeof email !== "string" || !emailRegex.test(email.trim())){
+        return "Please provide a valid email address."
+    }
+
+    if(typeof password !== "string" || password.length < 8){
+        return "Invalid email or password"
+    }
+
+    return null;
+}
+
 module.exports = {
-    validateSignup
+    validateSignup,
+    validateLogin
 }

@@ -22,6 +22,22 @@ const signup = async (userData) => {
     return data;
 };
 
+const login = async (userData) => {
+    const { email, password} = userData;
+
+    const { data, error} = await supabase.auth.signInWithPassword({
+        email,
+        password
+    });
+
+    if(error){
+        throw error;
+    }
+
+    return data;
+};
+
 module.exports = {
-    signup
+    signup,
+    login
 }
