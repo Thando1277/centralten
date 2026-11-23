@@ -1,4 +1,4 @@
-const supabase = require("../config/database");
+const {supabase} = require("../config/database");
 
 const authenticateUser = async (req, res, next) => {
     try {
@@ -30,6 +30,7 @@ const authenticateUser = async (req, res, next) => {
         }
 
         req.user = data.user;
+        req.accessToken = token
 
         next();
 

@@ -1,4 +1,4 @@
-const supabase = require("../config/database");
+const {supabase, createUserClient} = require("../config/database");
 
 const signup = async (userData) => {
     const { full_name, email, password, phone_number, role} = userData;
@@ -37,7 +37,24 @@ const login = async (userData) => {
     return data;
 };
 
+const getUserProfile = async (userId, accessToken) => {
+
+    const userSupabase = createUserClient(accessToken);
+
+    const { data, error} = await userSupabase
+        .from("users")
+        .select("*")
+        .eq("user_id", userId)
+        .single();
+
+    if(error){
+        throw error;
+    }
+
+    return data;
+}
 module.exports = {
     signup,
-    login
+    login,
+    getUserProfile
 }

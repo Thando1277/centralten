@@ -132,14 +132,25 @@ const login = async (req, res) => {
 }
 
 const getProfile = async (req, res) => {
-    return res.status(200).json({
-        success: true,
-        message: "You are authenticated.",
-        user: {
-            id: req.user.id,
-            email: req.user.email
-        }
-    });
+    try{
+        const userId = req.user.id;
+
+        const profile = await authService.getUserProfile(userId, req.accessToken);
+
+        return res.status(200).json({
+            success: true,
+            message: "Profile retreived successfully",
+            user: profile
+        });
+
+    }catch(error){
+        console.error("Get profile error, ", error);
+
+        return res.status(500).json({
+            success: false,
+            message: "Unable to retreive user profile."
+        });
+    }
 };
 
 module.exports = {
