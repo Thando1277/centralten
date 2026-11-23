@@ -26,4 +26,16 @@ router.get(
     }
 )
 
+router.get("/tenant-dashboard",
+    authenticateUser,
+    loadUserProfile,
+    authorizeRoles("tenant"),
+    (req, res) => {
+        return res.status(200).json({
+            success: true,
+            message: "Welcome to the tenant dashboard"
+        })
+    }
+)
+
 module.exports = router;
